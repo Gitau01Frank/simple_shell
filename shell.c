@@ -118,4 +118,22 @@ void execArgsPiped(char** parsed, char** parsedpipe)
 			close(pipefd[1]);
 			dup2(pipefd[0], STDIN_FILENO);
 			close(pipefd[0]);
+			if (execvp(parsedpipe[0], parsedpipe) < 0) {
+				printf("\nCould not execute command 2..");
+				exit(0);
+			}
+		} else {
+			// parent executing, waiting for two children
+			wait(NULL);
+			wait(NULL);
+		}
+	}
+}
 
+// Help command builtin
+void openHelp()
+{
+	puts("\n***WELCOME TO MY SHELL HELP***"
+		"\nCopyright @ Suprotik Dey"
+		"\n-Use the shell at your own risk..."
+		"\nList of Commands supported:"
