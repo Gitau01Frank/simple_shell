@@ -78,4 +78,25 @@ void execArgs(char** parsed)
 // Function where the piped system commands is executed
 void execArgsPiped(char** parsed, char** parsedpipe)
 {
+	// 0 is read end, 1 is write end
+	int pipefd[2];
+	pid_t p1, p2;
+
+	if (pipe(pipefd) < 0) {
+		printf("\nPipe could not be initialized");
+		return;
+	}
+	p1 = fork();
+	if (p1 < 0) {
+		printf("\nCould not fork");
+		return;
+	}
+
+	if (p1 == 0) {
+		// Child 1 executing..
+		// It only needs to write at the write end
+		close(pipefd[0]);
+		dup2(pipefd[1], STDOUT_FILENO);
+		close(pipefd[1]);
+
 
