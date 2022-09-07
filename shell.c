@@ -99,4 +99,23 @@ void execArgsPiped(char** parsed, char** parsedpipe)
 		dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[1]);
 
+	if (execvp(parsed[0], parsed) < 0) {
+			printf("\nCould not execute command 1..");
+			exit(0);
+		}
+	} else {
+		// Parent executing
+		p2 = fork();
+
+		if (p2 < 0) {
+			printf("\nCould not fork");
+			return;
+		}
+
+		// Child 2 executing..
+		// It only needs to read at the read end
+		if (p2 == 0) {
+			close(pipefd[1]);
+			dup2(pipefd[0], STDIN_FILENO);
+			close(pipefd[0]);
 
